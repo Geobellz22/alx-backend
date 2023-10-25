@@ -3,6 +3,7 @@
 
 from base_caching import BaseCaching
 
+
 class FIFOCache(BaseCaching):
     """fifo cache class"""
     def __init__(self):
@@ -13,7 +14,7 @@ class FIFOCache(BaseCaching):
         """Assign value for key"""
         if key is None or item is None:
             return
-        
+
 
         if len(self.cache_data) >= BaseCaching.MAX_TITLES:
             if key not in self.cache_data.keys():
