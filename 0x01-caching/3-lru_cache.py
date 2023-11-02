@@ -1,39 +1,39 @@
 #!/usr/bin/env python3
-"""LRU caching system"""
+"""Least Recently Used caching module.
+"""
+from collections import OrderedDict
 
 from base_caching import BaseCaching
-from collections import OrderedDict
 
 
 class LRUCache(BaseCaching):
-    """LRUCache class"""
-    count = {'space_1': 0, 'space_2': 0, 'space_3': 0, 'space_4': 0}
-
+    """Represents an object that allows storing and
+    retrieving items from a dictionary with a LRU
+    removal mechanism when the limit is reached.
+    """
     def __init__(self):
-        """init method"""
+        """Initializes the cache.
+        """
         super().__init__()
         self.cache_data = OrderedDict()
 
     def put(self, key, item):
-        """Assign value to a given key"""
+        """Adds an item in the cache.
+        """
         if key is None or item is None:
             return
-
-        if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
-            if key not in self.cache_data.keys():
-                last_key, last_value = self.cache_data.popitem(last=False)
-                print(f"DISCARD {last_key}")
-
+        if key not in self.cache_data:
+            if len(self.cache_data) + 1 > BaseCaching.MAX_ITEMS:
+                lru_key, _ = self.cache_data.popitem(True)
+                print("DISCARD:", lru_key)
             self.cache_data[key] = item
-            self.cache_data.move_to_end(key)
-
-        self.cache_data[key] = item
-        self.cache_data.move_to_end(key)
+            self.cache_data.move_to_end(key, last=False)
+        else:
+            self.cache_data[key] = item
 
     def get(self, key):
-        """Get value for a given key"""
-        try:
-            self.cache_data.move_to_end(key)
-            return self.cache_data[key]
-        except KeyError:
-            return None
+        """Retrieves an item by key.
+        """
+        if key is not None and key in self.cache_data:
+            self.cache_data.move_to_end(key, last=False)
+        return self.cache_data.get(key, None)
